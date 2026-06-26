@@ -5,17 +5,16 @@
 #include <string.h>
 #include <time.h>
 
-// ============== 常量定义 ==============
-#define MAX_USERS 100
-#define MAX_RECORDS 1000
-#define USERNAME_LEN 32
-#define PASSWORD_LEN 32
-#define MAX_PC 50  // 网吧电脑数量
-#define RATE_PER_HOUR 5.0  // 每小时5元
+// 常量定义 
+#define maxUsers 100               // 最大用户数量
+#define maxRecords 1000            // 最大消费记录数量
+#define USERNAME_LEN 32             // 用户名长度
+#define PASSWORD_LEN 32             // 密码长度
+#define MAX_PC 50                   // 网吧电脑数量
+#define RATE_PER_HOUR 5.0           // 每小时价格是5元
 
-// ============== 数据结构 ==============
 
-// 用户结构体
+// 用户
 typedef struct {
     char username[USERNAME_LEN];
     char password[PASSWORD_LEN];
@@ -25,7 +24,7 @@ typedef struct {
     time_t login_time;  // 上机时间
 } User;
 
-// 消费记录结构体
+// 消费记录
 typedef struct {
     char username[USERNAME_LEN];
     int pc_id;
@@ -35,7 +34,7 @@ typedef struct {
     int is_paid;     // 是否已结账
 } Record;
 
-// 电脑状态结构体
+// 电脑状态
 typedef struct {
     int pc_id;
     int is_occupied;  // 是否被占用
@@ -43,15 +42,17 @@ typedef struct {
     time_t start_time;  // 开始使用时间
 } PCStatus;
 
-// ============== 全局变量 ==============
-static User users[MAX_USERS];
-static int user_count = 0;
-static Record records[MAX_RECORDS];
+//全局变量 
+static User users[maxUsers];//所有的用户信息
+static int user_count = 0;//现在的用户数量
+static Record records[maxRecords];//所有的消费记录
 static int record_count = 0;
 static PCStatus pcs[MAX_PC];
 
-// ============== 文件操作函数 ==============
 
+//主体操作部分
+
+//数据的保存
 // 保存用户数据到文件
 void save_users() {
     FILE *fp = fopen("users.dat", "wb");
@@ -130,7 +131,7 @@ void load_pcs() {
 
 // 注册新用户
 int register_user() {
-    if (user_count >= MAX_USERS) {
+    if (user_count >= maxUsers) {
         printf("错误：用户数量已达上限！\n");
         return 0;
     }
@@ -192,7 +193,7 @@ int login_user(char *logged_username) {
     return -1;
 }
 
-// 充值函数
+// 充值
 void recharge(int user_idx) {
     double amount;
     printf("\n========== 账户充值 ==========\n");
@@ -210,8 +211,17 @@ void recharge(int user_idx) {
     printf("充值成功！当前余额: %.2f 元\n", users[user_idx].balance);
 }
 
-// ============== 上机计费函数 ==============
 
+
+
+
+
+
+
+
+
+
+//上机计费
 // 计算上网费用
 double calculate_fee(time_t start_time) {
     time_t now = time(NULL);
@@ -317,7 +327,7 @@ int logout_pc(int user_idx) {
     users[user_idx].balance -= fee;
 
     // 创建消费记录
-    if (record_count < MAX_RECORDS) {
+    if (record_count < maxRecords) {
         strcpy(records[record_count].username, users[user_idx].username);
         records[record_count].pc_id = users[user_idx].pc_id;
         records[record_count].start_time = users[user_idx].login_time;
@@ -387,8 +397,10 @@ void show_history(int user_idx) {
     }
 }
 
-// ============== 管理功能 ==============
 
+
+
+//用户管理
 // 管理员登录验证
 int admin_login() {
     char password[PASSWORD_LEN];
@@ -456,8 +468,11 @@ void show_statistics() {
     printf("空闲电脑: %d 台\n", MAX_PC - active_users);
 }
 
-// ============== 主界面函数 ==============
 
+
+
+
+//主界面
 // 打印主菜单
 void print_main_menu() {
     printf("\n");
@@ -503,12 +518,21 @@ void print_admin_menu() {
     printf("请选择: ");
 }
 
+void print_three_menu(){
+    printf("\n");
+    printf("打印主菜单输入-1\n");
+    printf("打印管理员菜单输入-2\n");
+    printf("打印用户菜单输入机器编号\n");
+
+    printf("\n");
+}
+
 // 强制下线用户（管理员功能）
 void force_logout() {
 show_all_users();
     printf("\n请输入要强制下线的用户名: ");
     char username[USERNAME_LEN];
-    scanf("%s", username);
+    scanf("%s", username);//输入用户名
 
     for (int i = 0; i < user_count; i++) {
         if (strcmp(users[i].username, username) == 0) {
@@ -525,7 +549,7 @@ show_all_users();
             printf("消费金额: %.2f 元将从余额中扣除！\n", fee);
 
             // 创建记录
-            if (record_count < MAX_RECORDS) {
+            if (record_count < maxRecords) {
                 strcpy(records[record_count].username, users[i].username);
                 records[record_count].pc_id = users[i].pc_id;
                 records[record_count].start_time = users[i].login_time;
@@ -556,7 +580,7 @@ show_all_users();
     printf("未找到用户: %s\n", username);
 }
 
-// ============== 主函数 ==============
+// 主函数 
 int main() {
     printf("===========================================\n");
     printf("       欢迎使用网吧上网计费系统\n");
@@ -567,8 +591,11 @@ int main() {
     load_records();
     load_pcs();
 
+    print_three_menu();
     int choice;
-    int logged_in = -1;  // 登录用户索引
+    int logged_in;  // 登录用户索引
+    scanf("%d", &logged_in);
+
     char current_user[USERNAME_LEN] = "";
 
     while (1) {
@@ -579,13 +606,13 @@ int main() {
 
             switch (choice) {
                 case 1:
-                    register_user();
+                    register_user();//注册新用户
                     break;
                 case 2:
-                    logged_in = login_user(current_user);
+                    logged_in = login_user(current_user);//实现登录
                     break;
                 case 3:
-                    if (admin_login()) {
+                    if (admin_login()) {//管理员登录（困难点，怎么去衔接）
                         logged_in = -2;  // 管理员模式
                     }
                     break;
@@ -602,16 +629,16 @@ int main() {
 
             switch (choice) {
                 case 1:
-                    show_all_users();
+                    show_all_users();//查看所有用户
                     break;
                 case 2:
-                    show_all_records();
+                    show_all_records();//查看所有消费记录
                     break;
                 case 3:
-                    show_statistics();
+                    show_statistics();//查看系统统计
                     break;
                 case 4:
-                    force_logout();
+                    force_logout();//强制下线用户
                     break;
                 case 0:
                     logged_in = -1;
@@ -636,19 +663,19 @@ int main() {
 
             switch (choice) {
                 case 1:
-                    login_pc(logged_in);
+                    login_pc(logged_in);//上机
                     break;
                 case 2:
-                    logout_pc(logged_in);
+                    logout_pc(logged_in);//下机
                     break;
                 case 3:
-                    check_current_fee(logged_in);
+                    check_current_fee(logged_in);//查询当前费用
                     break;
                 case 4:
-                    recharge(logged_in);
+                    recharge(logged_in);//充值
                     break;
                 case 5:
-                    show_history(logged_in);
+                    show_history(logged_in);//查看历史记录
                     break;
                 case 6:
                     logged_in = -1;
