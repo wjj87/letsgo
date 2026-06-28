@@ -11,7 +11,7 @@
 #define USERNAME_LEN 32             // 用户名长度
 #define PASSWORD_LEN 32             // 密码长度
 #define MAX_PC 50                   // 网吧电脑数量
-#define RATE_PER_HOUR 5.0           // 每小时价格是5元
+#define per_hour 5.0           // 每小时价格是5元
 
 
 // 用户
@@ -127,7 +127,7 @@ void load_pcs() {
     fclose(fp);
 }
 
-// ============== 用户管理函数 ==============
+
 
 // 注册新用户
 int register_user() {
@@ -227,7 +227,7 @@ double calculate_fee(time_t start_time) {
     time_t now = time(NULL);
     double hours = difftime(now, start_time) / 3600.0;
     // 不足1小时按1小时计费，超过部分按分钟计算
-    return hours * RATE_PER_HOUR;
+    return hours * per_hour;
 }
 
 // 显示空闲电脑
@@ -273,9 +273,9 @@ int login_pc(int user_idx) {
     // 计算当前费用
     double current_fee = calculate_fee(time(NULL));
 
-    if (users[user_idx].balance < current_fee + RATE_PER_HOUR) {
+    if (users[user_idx].balance < current_fee + per_hour) {
         printf("余额不足！当前余额: %.2f 元，至少需要: %.2f 元\n",
-               users[user_idx].balance, current_fee + RATE_PER_HOUR);
+               users[user_idx].balance, current_fee + per_hour);
         return 0;
     }
 
@@ -294,7 +294,7 @@ int login_pc(int user_idx) {
     printf("\n上机成功！\n");
     printf("电脑编号: %d\n", pc_id);
     printf("上机时间: %s", ctime(&users[user_idx].login_time));
-    printf("费率: %.2f 元/小时\n", RATE_PER_HOUR);
+    printf("费率: %.2f 元/小时\n", per_hour);
 
     return 1;
 }
@@ -308,7 +308,7 @@ int logout_pc(int user_idx) {
 
     time_t now = time(NULL);
     double hours = difftime(now, users[user_idx].login_time) / 3600.0;
-    double fee = hours * RATE_PER_HOUR;
+    double fee = hours * per_hour;
 
     printf("\n========== 下机结账 ==========\n");
     printf("使用电脑: %d\n", users[user_idx].pc_id);
@@ -366,7 +366,7 @@ void check_current_fee(int user_idx) {
 
     time_t now = time(NULL);
     double hours = difftime(now, users[user_idx].login_time) / 3600.0;
-    double fee = hours * RATE_PER_HOUR;
+    double fee = hours * per_hour;
 
     printf("\n========== 当前费用查询 ==========\n");
     printf("使用电脑: %d\n", users[user_idx].pc_id);
@@ -490,9 +490,7 @@ void print_main_menu() {
 // 打印用户菜单
 void print_user_menu() {
     printf("\n");
-    printf("===========================================\n");
-    printf("       网吧上网计费系统 - 用户菜单\n");
-    printf("===========================================\n");
+    printf(" !!!!!!!用户菜单!!!!!!!!\n");
     printf("  1. 上机\n");
     printf("  2. 下机结账\n");
     printf("  3. 查询当前费用\n");
@@ -506,9 +504,7 @@ void print_user_menu() {
 // 打印管理员菜单
 void print_admin_menu() {
     printf("\n");
-    printf("===========================================\n");
-    printf("       网吧上网计费系统 - 管理员菜单\n");
-    printf("===========================================\n");
+    printf("!!!!!!!!!管理员菜单!!!!!!!!!\n");
     printf("  1. 查看所有用户\n");
     printf("  2. 查看所有消费记录\n");
     printf("  3. 查看系统统计\n");
@@ -523,7 +519,6 @@ void print_three_menu(){
     printf("打印主菜单输入-1\n");
     printf("打印管理员菜单输入-2\n");
     printf("打印用户菜单输入机器编号\n");
-
     printf("\n");
 }
 
@@ -543,7 +538,7 @@ show_all_users();
 
             time_t now = time(NULL);
             double hours = difftime(now, users[i].login_time) / 3600.0;
-            double fee = hours * RATE_PER_HOUR;
+            double fee = hours * per_hour;
 
             printf("警告：强制下线用户 %s\n", username);
             printf("消费金额: %.2f 元将从余额中扣除！\n", fee);
