@@ -8,7 +8,7 @@
 // 常量定义 
 #define maxUsers 100               // 最大用户数量
 #define maxRecords 1000            // 最大消费记录数量
-#define USERNAME_LEN 32             // 用户名长度
+#define #sym:useNameLen 32             // 用户名长度
 #define PASSWORD_LEN 32             // 密码长度
 #define MAX_PC 50                   // 网吧电脑数量
 #define per_hour 5.0           // 每小时价格是5元
@@ -210,14 +210,6 @@ void recharge(int user_idx) {
     save_users();
     printf("充值成功！当前余额: %.2f 元\n", users[user_idx].balance);
 }
-
-
-
-
-
-
-
-
 
 
 
@@ -582,23 +574,20 @@ int main() {
     printf("===========================================\n");
 
     // 加载数据
-    load_users();
-    load_records();
-    load_pcs();
+    load_users();//加载用户数据
+    load_records();//加载消费记录
+    load_pcs();//加载电脑状态
 
     print_three_menu();
     int choice;
     int logged_in;  // 登录用户索引
     scanf("%d", &logged_in);
-
-    char current_user[USERNAME_LEN] = "";
-
+    char current_user[USERNAME_LEN] = "";// 当前登录的用户名
     while (1) {
         if (logged_in == -1) {
             // 主菜单
             print_main_menu();
             scanf("%d", &choice);
-
             switch (choice) {
                 case 1:
                     register_user();//注册新用户
@@ -607,7 +596,7 @@ int main() {
                     logged_in = login_user(current_user);//实现登录
                     break;
                 case 3:
-                    if (admin_login()) {//管理员登录（困难点，怎么去衔接）
+                    if (admin_login()) {//管理员登录！！！衔接
                         logged_in = -2;  // 管理员模式
                     }
                     break;
@@ -682,6 +671,5 @@ int main() {
             }
         }
     }
-
     return 0;
 }
