@@ -8,16 +8,16 @@
 // 常量定义 
 #define maxUsers 100               // 最大用户数量
 #define maxRecords 1000            // 最大消费记录数量
-#define #sym:useNameLen 32             // 用户名长度
-#define PASSWORD_LEN 32             // 密码长度
+#define userNameLen 32             // 用户名长度
+#define passwordLen 32             // 密码长度
 #define MAX_PC 50                   // 网吧电脑数量
 #define per_hour 5.0           // 每小时价格是5元
 
 
 // 用户
 typedef struct {
-    char username[USERNAME_LEN];
-    char password[PASSWORD_LEN];
+    char username[userNameLen];
+    char password[passwordLen];
     double balance;  // 余额
     int is_active;   // 是否正在上网
     int pc_id;       // 电脑编号
@@ -26,7 +26,7 @@ typedef struct {
 
 // 消费记录
 typedef struct {
-    char username[USERNAME_LEN];
+    char username[userNameLen];
     int pc_id;
     time_t start_time;
     time_t end_time;
@@ -38,7 +38,7 @@ typedef struct {
 typedef struct {
     int pc_id;
     int is_occupied;  // 是否被占用
-    char username[USERNAME_LEN];  // 使用者用户名
+    char username[userNameLen];  // 使用者用户名
     time_t start_time;  // 开始使用时间
 } PCStatus;
 
@@ -102,7 +102,7 @@ void load_records() {
     fclose(fp);
 }
 
-// 保存电脑状态
+// 保存上机状态
 void save_pcs() {
     FILE *fp = fopen("pcs.dat", "wb");
     if (fp == NULL) return;
@@ -110,11 +110,11 @@ void save_pcs() {
     fclose(fp);
 }
 
-// 加载电脑状态
+// 加载上机状态
 void load_pcs() {
     FILE *fp = fopen("pcs.dat", "rb");
     if (fp == NULL) {
-        // 初始化电脑状态
+        // 初始化上机状态
         for (int i = 0; i < MAX_PC; i++) {
             pcs[i].pc_id = i + 1;
             pcs[i].is_occupied = 0;
@@ -136,8 +136,8 @@ int register_user() {
         return 0;
     }
 
-    char username[USERNAME_LEN];
-    char password[PASSWORD_LEN];
+    char username[userNameLen];//姓名
+    char password[passwordLen];//密码
 
     printf("\n========== 用户注册 ==========\n");
     printf("请输入用户名（最多31个字符）: ");
@@ -171,8 +171,8 @@ int register_user() {
 
 // 用户登录
 int login_user(char *logged_username) {
-    char username[USERNAME_LEN];
-    char password[PASSWORD_LEN];
+    char username[userNameLen];
+    char password[passwordLen];
 
     printf("\n========== 用户登录 ==========\n");
     printf("请输入用户名: ");
@@ -192,6 +192,8 @@ int login_user(char *logged_username) {
     printf("错误：用户名或密码错误！\n");
     return -1;
 }
+
+
 
 // 充值
 void recharge(int user_idx) {
@@ -395,11 +397,10 @@ void show_history(int user_idx) {
 //用户管理
 // 管理员登录验证
 int admin_login() {
-    char password[PASSWORD_LEN];
+    char password[passwordLen];
     printf("\n========== 管理员登录 ==========\n");
     printf("请输入管理员密码: ");
     scanf("%s", password);
-
     // 默认管理员密码: admin123
     if (strcmp(password, "admin123") == 0) {
         printf("管理员登录成功！\n");
@@ -518,7 +519,7 @@ void print_three_menu(){
 void force_logout() {
 show_all_users();
     printf("\n请输入要强制下线的用户名: ");
-    char username[USERNAME_LEN];
+    char username[userNameLen];
     scanf("%s", username);//输入用户名
 
     for (int i = 0; i < user_count; i++) {
@@ -582,7 +583,7 @@ int main() {
     int choice;
     int logged_in;  // 登录用户索引
     scanf("%d", &logged_in);
-    char current_user[USERNAME_LEN] = "";// 当前登录的用户名
+    char current_user[userNameLen] = "";// 当前登录的用户名
     while (1) {
         if (logged_in == -1) {
             // 主菜单
